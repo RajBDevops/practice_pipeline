@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Nginx') {
+            steps {
+                echo 'Installing Nginx...'
+                sh '''
+                sudo apt-get update
+                sudo apt-get install -y nginx
+                '''
+            }
+        }
+
+        stage('Start Nginx') {
+            steps {
+                echo 'Starting Nginx...'
+                sh 'sudo systemctl start nginx'
+            }
+        }
+
+        stage('Enable Nginx') {
+            steps {
+                echo 'Enabling Nginx to start on boot...'
+                sh 'sudo systemctl enable nginx'
+            }
+        }
+
+        stage('Status Check') {
+            steps {
+                echo 'Checking Nginx status...'
+                sh 'sudo systemctl status nginx'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Nginx installed and running successfully!'
+        }
+        failure {
+            echo 'Something went wrong with the Nginx setup.'
+        }
+    }
+}
